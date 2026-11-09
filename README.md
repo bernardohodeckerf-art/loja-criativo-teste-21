@@ -87,3 +87,5 @@ A referência `https://sorveteria-landing.vercel.app` orientou entradas laterais
 - `src/components/ui/testimonial-v2.tsx`: adaptação do componente enviado, com pausa e modo estático. Não usa os depoimentos sobre ERP ou avatares genéricos do exemplo.
 
 No mobile os deslocamentos são menores. Com movimento reduzido, a cena deixa de ficar fixa, os depoimentos param e o hero mantém o poster. O vídeo da galeria só é carregado ao solicitar reprodução.
+
+A abertura em `src/components/ui/botanical-intro.tsx` dura 1,95 s, aparece uma vez por sessão e funciona sem aguardar as mídias. Ramos pintados entram pelas laterais, pétalas sobem, a marca é revelada como tinta e duas camadas de papel abrem a cena. O título do hero só inicia sua entrada depois da abertura. “Pular abertura” e Escape encerram a animação imediatamente; movimento reduzido omite a sequência.

@@ -1055,46 +1055,6 @@ dd {
   width: 18px;
   height: 18px;
 }
-.intro {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  background: #faf5ec;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  animation: ink 1.7s both;
-  pointer-events: auto;
-}
-.intro > svg {
-  stroke-width: 1;
-  color: #9aab8c;
-}
-.intro h2 {
-  margin: 20px 0 10px;
-}
-.intro p {
-  font-family: "Cormorant Garamond", serif;
-  font-style: italic;
-}
-.intro button {
-  margin-top: 25px;
-  font-size: 11px;
-}
-@keyframes ink {
-  0% {
-    clip-path: circle(100%);
-  }
-  85% {
-    clip-path: circle(100%);
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    visibility: hidden;
-  }
-}
 @media (min-width: 1500px) {
   .hero-copy {
     margin-top: 35px;
@@ -1557,9 +1517,6 @@ dd {
   }
   html {
     scroll-padding-top: 85px;
-  }
-  .intro h2 {
-    font-size: 35px;
   }
 }
 @media (max-width: 370px) {
@@ -2762,4 +2719,510 @@ dd {
   .hero-media {
     height: 330px;
   }
+}
+/* The opening is an independent 1.95 s paper-and-ink sequence, never tied to media loading. */
+.opening {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  isolation: isolate;
+  color: #263b2f;
+}
+.opening-paper {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: calc(50% + 35px);
+  background: #faf5ec;
+  z-index: -2;
+  will-change: transform;
+}
+.opening-paper:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.1;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 150 150' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23857964' filter='url(%23n)' d='M0 0h150v150H0z'/%3E%3C/svg%3E");
+}
+.opening-paper--left {
+  left: 0;
+  clip-path: polygon(
+    0 0,
+    96% 0,
+    100% 15%,
+    96% 30%,
+    100% 48%,
+    95% 65%,
+    100% 82%,
+    96% 100%,
+    0 100%
+  );
+  animation: opening-left 1.95s cubic-bezier(0.7, 0, 0.2, 1) both;
+}
+.opening-paper--right {
+  right: 0;
+  clip-path: polygon(
+    4% 0,
+    100% 0,
+    100% 100%,
+    4% 100%,
+    0 85%,
+    5% 65%,
+    0 47%,
+    4% 25%,
+    0 12%
+  );
+  animation: opening-right 1.95s cubic-bezier(0.7, 0, 0.2, 1) both;
+}
+.opening-ink {
+  position: absolute;
+  width: min(40vw, 470px);
+  height: min(40vw, 470px);
+  border-radius: 43% 57% 68% 32%/55% 34% 66% 45%;
+  filter: blur(35px);
+  z-index: -1;
+  animation: opening-wash 1.8s ease-out both;
+  pointer-events: none;
+}
+.opening-ink--sage {
+  background: #a8b49b55;
+  left: 23%;
+  top: 17%;
+}
+.opening-ink--rose {
+  background: #dca6ac38;
+  right: 19%;
+  bottom: 8%;
+  animation-delay: 0.08s;
+}
+.opening-logo {
+  text-align: center;
+  position: relative;
+  z-index: 3;
+  animation: opening-logo-out 1.95s ease both;
+}
+.opening-logo-mark {
+  width: 110px;
+  height: 110px;
+  margin: 0 auto 23px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  animation: opening-mark 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.opening-logo-mark > svg:last-child {
+  color: #69835a;
+  animation: opening-bloom 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.opening-logo-orbit {
+  position: absolute;
+  inset: 0;
+  width: 110px;
+  height: 110px;
+  fill: none;
+  stroke: #c4a676;
+  stroke-width: 0.65;
+  stroke-dasharray: 302;
+  stroke-dashoffset: 302;
+  transform: rotate(-120deg);
+  animation: opening-orbit 1.2s ease 0.05s forwards;
+}
+.opening-wordmark {
+  overflow: hidden;
+  padding: 5px 15px 12px;
+}
+.opening-wordmark > span {
+  display: block;
+  font:
+    500 clamp(40px, 5.2vw, 78px)/1.1 "Cormorant Garamond",
+    Georgia,
+    serif;
+  letter-spacing: -1.8px;
+  animation: opening-word 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.14s both;
+  clip-path: inset(0 0 0 0);
+}
+.opening-logo > p {
+  font-size: 8px;
+  letter-spacing: 4px;
+  color: #7a8d6c;
+  margin: 12px 0 0;
+  animation: opening-tag 0.65s ease 0.35s both;
+}
+.opening-flourish {
+  display: block;
+  width: 105px;
+  height: 8px;
+  margin: 21px auto 0;
+  background: #dca6ac60;
+  border-radius: 70% 30% 65% 35%;
+  transform: rotate(-3deg);
+  animation: opening-brush 0.6s ease 0.3s both;
+  transform-origin: left;
+}
+.opening-botanical {
+  position: absolute;
+  top: 8%;
+  bottom: 6%;
+  width: min(35vw, 430px);
+  pointer-events: none;
+  z-index: 1;
+  animation: opening-branch 1.95s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.opening-botanical--left {
+  left: -5%;
+  transform-origin: bottom left;
+}
+.opening-botanical--right {
+  right: -5%;
+  scale: -1 1;
+  transform-origin: bottom left;
+  animation-delay: 0.07s;
+}
+.opening-botanical svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.opening-stem {
+  stroke: #7c9669;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 720;
+  stroke-dashoffset: 720;
+  animation: opening-stem-draw 0.9s ease 0.1s forwards;
+}
+.opening-leaves {
+  fill: #a8b49b99;
+  stroke: #82996e;
+  stroke-width: 0.6;
+  animation: opening-leaf-grow 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+  transform-origin: 50% 100%;
+}
+.opening-blossom {
+  fill: #dca6ac8c;
+  stroke: #c28d9788;
+  stroke-width: 0.5;
+  animation: opening-flower 0.8s ease 0.25s both;
+}
+.opening-blossom circle {
+  fill: #c4a676bb;
+  stroke: none;
+}
+.opening-blossom-small {
+  fill: #e2bab3a0;
+  animation-delay: 0.4s;
+}
+.opening-skip {
+  position: absolute;
+  top: 30px;
+  right: 5%;
+  z-index: 5;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  min-height: 44px;
+  padding: 10px 17px;
+  border: 1px solid #a8b49b70;
+  border-radius: 30px;
+  font-size: 10px;
+  background: #faf5ecb0;
+  backdrop-filter: blur(5px);
+}
+.opening-skip:focus {
+  outline: 2px solid #a8b49b;
+  outline-offset: 4px;
+}
+.opening-caption {
+  position: absolute;
+  bottom: 9%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 7px;
+  letter-spacing: 2.8px;
+  color: #87957a;
+  animation: opening-caption 1.95s ease both;
+}
+.opening-petals {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+.opening-petals > i {
+  position: absolute;
+  left: var(--petal-x);
+  top: 76%;
+  height: 13px;
+  width: 23px;
+  background: #dca6ac75;
+  border-radius: 80% 10% 80% 20%;
+  animation: opening-petal 1.8s cubic-bezier(0.15, 0.6, 0.25, 1)
+    var(--petal-delay) both;
+}
+.opening-petals > i:nth-child(3n) {
+  width: 14px;
+  height: 25px;
+  background: #a8b49b88;
+}
+.opening-petals > i:nth-child(even) {
+  top: 70%;
+  filter: blur(1px);
+}
+@keyframes opening-left {
+  0%,
+  65% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-105%);
+  }
+}
+@keyframes opening-right {
+  0%,
+  65% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(105%);
+  }
+}
+@keyframes opening-wash {
+  0% {
+    opacity: 0;
+    transform: scale(0.2) rotate(-30deg);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1.1) rotate(5deg);
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.6) rotate(15deg);
+  }
+}
+@keyframes opening-mark {
+  from {
+    opacity: 0;
+    transform: translateY(15px) scale(0.65);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes opening-bloom {
+  from {
+    transform: rotate(-75deg) scale(0.2);
+  }
+  to {
+    transform: rotate(0) scale(1);
+  }
+}
+@keyframes opening-orbit {
+  to {
+    stroke-dashoffset: 0;
+    transform: rotate(45deg);
+  }
+}
+@keyframes opening-word {
+  from {
+    opacity: 0;
+    transform: translateY(80%) rotate(2deg);
+    filter: blur(6px);
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(0);
+    filter: blur(0);
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes opening-tag {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+    letter-spacing: 7px;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    letter-spacing: 4px;
+  }
+}
+@keyframes opening-brush {
+  from {
+    opacity: 0;
+    scale: 0 1;
+  }
+  to {
+    opacity: 1;
+    scale: 1 1;
+  }
+}
+@keyframes opening-logo-out {
+  0%,
+  66% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-28px) scale(1.08);
+    filter: blur(5px);
+  }
+}
+@keyframes opening-branch {
+  0% {
+    opacity: 0;
+    transform: translateX(-90%) rotate(-25deg);
+  }
+  35% {
+    opacity: 1;
+    transform: translateX(0) rotate(2deg);
+  }
+  65% {
+    opacity: 1;
+    transform: translateX(2%) rotate(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-105%) rotate(-15deg);
+  }
+}
+@keyframes opening-stem-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes opening-leaf-grow {
+  from {
+    opacity: 0;
+    scale: 0.55;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+@keyframes opening-flower {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes opening-petal {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 50px, 0) rotate(0) scale(0.3);
+  }
+  25% {
+    opacity: 0.9;
+  }
+  70% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--petal-drift), -230px, 0)
+      rotate(var(--petal-turn)) scale(1.1);
+  }
+}
+@keyframes opening-caption {
+  0%,
+  15% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  35%,
+  65% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  90%,
+  100% {
+    opacity: 0;
+  }
+}
+@media (max-width: 760px) {
+  .opening-botanical {
+    width: 48vw;
+    top: 18%;
+    bottom: 12%;
+  }
+  .opening-botanical--left {
+    left: -18%;
+  }
+  .opening-botanical--right {
+    right: -18%;
+  }
+  .opening-logo-mark {
+    margin-bottom: 18px;
+    width: 95px;
+    height: 95px;
+  }
+  .opening-logo-orbit {
+    width: 95px;
+    height: 95px;
+  }
+  .opening-logo-mark > svg:last-child {
+    width: 43px;
+    height: 43px;
+  }
+  .opening-wordmark > span {
+    font-size: clamp(37px, 9vw, 55px);
+    letter-spacing: -1px;
+  }
+  .opening-logo > p {
+    font-size: 6px;
+    letter-spacing: 3px;
+  }
+  .opening-ink {
+    width: 80vw;
+    height: 80vw;
+    filter: blur(22px);
+  }
+  .opening-ink--sage {
+    left: -8%;
+    top: 24%;
+  }
+  .opening-ink--rose {
+    right: -10%;
+    bottom: 15%;
+  }
+  .opening-skip {
+    top: 20px;
+    right: 20px;
+    font-size: 9px;
+  }
+  .opening-caption {
+    font-size: 5px;
+    letter-spacing: 1.5px;
+    bottom: 12%;
+  }
+  .opening-petals > i {
+    width: 16px;
+    height: 9px;
+  }
+  .opening-petals > i:nth-child(3n) {
+    width: 10px;
+    height: 17px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .opening {
+    display: none;
+  }
+}
+.opening-botanical--right {
+  transform-origin: bottom center;
 }

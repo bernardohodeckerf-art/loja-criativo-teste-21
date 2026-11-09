@@ -4,7 +4,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowUpRight, Flower2, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import { googleReviews, shop, whatsapp } from "@/data";
-export function WordsPullUpMultiStyle() {
+export function WordsPullUpMultiStyle({ reveal = true }: { reveal?: boolean }) {
   const reduced = useMotionPreference();
   return (
     <h1>
@@ -14,7 +14,9 @@ export function WordsPullUpMultiStyle() {
           <motion.span
             key={i}
             initial={reduced ? false : { opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            animate={
+              reveal || reduced ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }
+            }
             transition={{ delay: i * 0.09, duration: 0.6 }}
           >
             {word}{" "}
@@ -23,7 +25,7 @@ export function WordsPullUpMultiStyle() {
     </h1>
   );
 }
-export default function PrismaHero() {
+export default function PrismaHero({ reveal = true }: { reveal?: boolean }) {
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 850], [0, 100]);
   const textY = useTransform(scrollY, [0, 850], [0, -45]);
@@ -40,7 +42,11 @@ export default function PrismaHero() {
         <motion.div
           className="hero-art-entry"
           initial={reduced ? false : { x: 100, opacity: 0, rotate: 8 }}
-          animate={{ x: 0, opacity: 1, rotate: 0 }}
+          animate={
+            reveal || reduced
+              ? { x: 0, opacity: 1, rotate: 0 }
+              : { x: 100, opacity: 0, rotate: 8 }
+          }
           transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }}
         >
           <div className="art-ring" />
@@ -62,7 +68,7 @@ export default function PrismaHero() {
         <span className="eyebrow light">
           <MapPin size={13} /> ATENDEMOS BLUMENAU E REGIÃO
         </span>
-        <WordsPullUpMultiStyle />
+        <WordsPullUpMultiStyle reveal={reveal} />
         <p>
           Há sentimentos que só as flores conseguem dizer.
           <br />

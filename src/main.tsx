@@ -23,6 +23,7 @@ import { api, json } from "./api";
 import Admin from "./components/ui/admin";
 import Checkout from "./components/ui/checkout";
 import PrismaHero from "./components/ui/prisma-hero";
+import BotanicalIntro from "./components/ui/botanical-intro";
 import MediaGallery from "./components/ui/media-gallery";
 import TestimonialsSection from "./components/ui/testimonial-v2";
 import FloralScrollScene from "./components/ui/floral-scroll-scene";
@@ -76,15 +77,20 @@ function App() {
   const [question, setQuestion] = useState<string | null>(null);
   const [intro, setIntro] = useState(
     () =>
+      location.pathname === "/" &&
       !sessionStorage.getItem("flowers-intro") &&
       !matchMedia("(prefers-reduced-motion: reduce)").matches,
   );
-  useEffect(() => {
-    const t = setTimeout(() => {
-      setIntro(false);
-      sessionStorage.setItem("flowers-intro", "1");
-    }, 1700);
-    return () => clearTimeout(t);
+  const dismissIntro = useCallback(() => {
+    const focused = document.activeElement?.closest(".opening");
+    sessionStorage.setItem("flowers-intro", "1");
+    setIntro(false);
+    if (focused)
+      requestAnimationFrame(() =>
+        document
+          .querySelector<HTMLAnchorElement>(".hero-actions a")
+          ?.focus({ preventScroll: true }),
+      );
   }, []);
   useEffect(() => {
     localStorage.setItem("flowers-cart", JSON.stringify(cart));
@@ -112,21 +118,7 @@ function App() {
   const active = products.filter((p) => p.active);
   return (
     <>
-      {intro && (
-        <div className="intro">
-          <Flower2 size={64} />
-          <h2>Espaço das Flores</h2>
-          <p>onde o afeto floresce</p>
-          <button
-            onClick={() => {
-              setIntro(false);
-              sessionStorage.setItem("flowers-intro", "1");
-            }}
-          >
-            Pular abertura →
-          </button>
-        </div>
-      )}
+      {intro && <BotanicalIntro onComplete={dismissIntro} />}
       <header>
         <Link to="/" className="brand">
           <Flower2 />
@@ -183,7 +175,7 @@ function App() {
         )}
         {location.pathname === "/" ? (
           <>
-            <PrismaHero />
+            <PrismaHero reveal={!intro} />
             <div className="benefits">
               <div>
                 <Truck />
