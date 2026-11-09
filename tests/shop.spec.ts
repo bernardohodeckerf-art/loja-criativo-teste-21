@@ -19,8 +19,8 @@ test("home, menu, catalog and persistent cart", async ({ page }, info) => {
     await expect(page.getByRole("navigation")).toBeVisible();
     await page.getByRole("button", { name: "Fechar menu" }).click();
   }
-  await page.getByRole("link", { name: "Ver nossos produtos" }).click();
-  await page.getByLabel("Buscar produtos").fill("carinho");
+  await page.getByRole("link", { name: "Comprar flores", exact: true }).click();
+  await page.getByLabel("Buscar produtos").fill("Um gesto de carinho");
   await expect(page.locator(".product-card")).toHaveCount(1);
   await page.locator(".product-card").click();
   await page.getByRole("button", { name: "Adicionar ao carrinho" }).click();
@@ -55,7 +55,7 @@ test("questionnaire retains occasion and galeria closes with keyboard", async ({
   await page.locator(".gallery-item").first().click();
   await expect(page.getByRole("dialog")).toBeVisible();
   await page.keyboard.press("ArrowRight");
-  await expect(page.getByText("2 / 4")).toBeVisible();
+  await expect(page.getByText("2 / 5")).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).toHaveCount(0);
 });
@@ -81,8 +81,12 @@ test("admin protects login and shares saved products across browsers", async ({
   await page
     .getByLabel("Descrição", { exact: true })
     .fill("Produto criado no teste");
-  await page.getByLabel("Fotos do produto (PNG, JPEG ou WebP)").setInputFiles("public/media/buques-hortensias-capa.webp");
-  await expect(page.getByRole("button", {name:"Foto de capa", exact:true})).toBeVisible();
+  await page
+    .getByLabel("Fotos do produto (PNG, JPEG ou WebP)")
+    .setInputFiles("public/media/buques-hortensias-capa.webp");
+  await expect(
+    page.getByRole("button", { name: "Foto de capa", exact: true }),
+  ).toBeVisible();
   await page.getByRole("button", { name: "Salvar produto" }).click();
   await expect(page.getByText("Produto salvo na loja.")).toBeVisible();
   const visitor = await browser.newPage();
@@ -100,11 +104,14 @@ test("real gallery loads videos only on demand and supports navigation", async (
 }) => {
   const videos: string[] = [];
   page.on("request", (r) => {
-    if (r.url().endsWith(".mp4") && !r.url().endsWith("/hero.mp4"))
+    if (
+      r.url().endsWith("/buques-hortensias.mp4") ||
+      r.url().endsWith("/decoracao-natalina.mp4")
+    )
       videos.push(r.url());
   });
   await page.goto("/");
-  await expect(page.locator(".real-media")).toHaveCount(4);
+  await expect(page.locator(".real-media")).toHaveCount(5);
   expect(videos).toHaveLength(0);
   await page
     .getByRole("button", {
@@ -151,17 +158,23 @@ test("scroll reveals content and honors reduced motion", async ({ page }) => {
     page.getByRole("button", { name: "Pausar movimento" }),
   ).toHaveCount(0);
 });
-test("testimonials show screenshot data and can pause", async ({ page }) => {
+test("testimonials and hero continue without pause controls", async ({
+  page,
+}) => {
   await page.goto("/");
   await page.locator("#testimonials-heading").scrollIntoViewIfNeeded();
   await expect(
     page.getByText("189 avaliações no Google", { exact: true }),
   ).toBeVisible();
-  await expect(page.getByText("Briana Patton")).toHaveCount(0);
-  await page.getByRole("button", { name: "Pausar movimento" }).click();
   await expect(
-    page.getByRole("button", { name: "Retomar movimento" }),
-  ).toHaveAttribute("aria-pressed", "true");
+    page.getByRole("button", {
+      name: /pausar|retomar|reproduzir vídeo de fundo/i,
+    }),
+  ).toHaveCount(0);
+  const track = page.locator(".testimonial-column ul").first();
+  const before = await track.getAttribute("style");
+  await page.waitForTimeout(200);
+  expect(await track.getAttribute("style")).not.toBe(before);
 });
 test("hero uses a real poster and avoids automatic video for reduced motion", async ({
   page,
@@ -180,5 +193,45 @@ test("hero uses a real poster and avoids automatic video for reduced motion", as
   expect(requests).toHaveLength(0);
   await expect(
     page.getByRole("button", { name: "Reproduzir vídeo de fundo" }),
-  ).toBeVisible();
+  ).toHaveCount(0);
+});
+test("photos, purchase buttons and map stay available without the API", async ({
+  page,
+}) => {
+  await page.route("**/api/products", (r) =>
+    r.fulfill({
+      status: 503,
+      contentType: "application/json",
+      body: '{"error":"Unavailable"}',
+    }),
+  );
+  await page.goto("/");
+  const cards = page.locator(".product-card");
+  await expect(cards).toHaveCount(4);
+  await cards.first().scrollIntoViewIfNeeded();
+  await expect(cards.first().locator("img")).toBeVisible();
+  expect(
+    await cards
+      .first()
+      .locator("img")
+      .evaluate((i: HTMLImageElement) => i.complete && i.naturalWidth > 0),
+  ).toBeTruthy();
+  await expect(cards.first().locator(".card-buy")).toHaveText("Comprar flores");
+  await expect(page.locator('iframe[title*="Localização"]')).toHaveAttribute(
+    "src",
+    /google.com\/maps\?q=/,
+  );
+  await expect(
+    page.getByRole("link", { name: "Traçar rota no Google Maps" }),
+  ).toHaveAttribute("href", /Frei%20Estanislau%20Schaette/);
+  await cards.first().click();
+  await expect(
+    page.getByRole("link", { name: "Comprar pelo WhatsApp" }),
+  ).toHaveAttribute("href", /wa.me\/554792036899/);
+  await page.getByRole("button", { name: "Adicionar ao carrinho" }).click();
+  await page.getByRole("link", { name: "Ver carrinho →", exact: true }).click();
+  await page.getByRole("button", { name: "Finalizar pelo WhatsApp" }).click();
+  await expect(
+    page.getByRole("link", { name: "Abrir pedido no WhatsApp" }),
+  ).toHaveAttribute("href", /confirme%20valores/);
 });

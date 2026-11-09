@@ -1,23 +1,21 @@
 import { useMotionPreference } from "@/hooks/use-motion-preference";
 import { useEffect, useRef, useState } from "react";
 import { motion, useAnimationFrame, useMotionValue } from "framer-motion";
-import { ArrowUpRight, Pause, Play, Star } from "lucide-react";
+import { ArrowUpRight, Star } from "lucide-react";
 import { googleReviews } from "@/data";
 type Review = (typeof googleReviews.items)[number];
 function TestimonialsColumn({
   items,
   duration,
-  paused,
 }: {
   items: Review[];
   duration: number;
-  paused: boolean;
 }) {
   const ref = useRef<HTMLUListElement>(null);
   const y = useMotionValue(0);
   const reduced = useMotionPreference();
   useAnimationFrame((_, delta) => {
-    if (paused || reduced || !ref.current) return;
+    if (reduced || !ref.current) return;
     const distance = ref.current.scrollHeight / 2;
     if (distance)
       y.set(
@@ -77,8 +75,6 @@ function TestimonialsColumn({
 }
 export default function TestimonialsSection() {
   const reduced = useMotionPreference();
-  const [paused, setPaused] = useState(false);
-  const [interacting, setInteracting] = useState(false);
   const [mobile, setMobile] = useState(
     () => window.matchMedia("(max-width: 760px)").matches,
   );
@@ -127,38 +123,19 @@ export default function TestimonialsSection() {
         >
           Pesquisar avaliações no Google <ArrowUpRight size={16} />
         </a>
-        {!reduced && (
-          <button
-            className="reviews-pause"
-            aria-pressed={paused}
-            onClick={() => setPaused(!paused)}
-          >
-            {paused ? <Play size={14} /> : <Pause size={14} />}{" "}
-            {paused ? "Retomar movimento" : "Pausar movimento"}
-          </button>
-        )}
       </motion.div>
       <div
         className={"testimonials-columns" + (reduced ? " reduced" : "")}
         aria-label="Avaliações de clientes"
-        onMouseEnter={() => setInteracting(true)}
-        onMouseLeave={() => setInteracting(false)}
-        onFocusCapture={() => setInteracting(true)}
-        onBlurCapture={() => setInteracting(false)}
       >
         {mobile ? (
-          <TestimonialsColumn
-            items={googleReviews.items}
-            duration={28}
-            paused={paused || interacting}
-          />
+          <TestimonialsColumn items={googleReviews.items} duration={28} />
         ) : (
           googleReviews.items.map((item, i) => (
             <TestimonialsColumn
               key={item.id}
               items={[item]}
               duration={i === 0 ? 20 : 26}
-              paused={paused || interacting}
             />
           ))
         )}

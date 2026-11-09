@@ -1,11 +1,16 @@
 import { useState } from "react";
+import { Product, whatsapp } from "@/data";
 import { api, json } from "@/api";
 export default function Checkout({
   items,
   onRefresh,
+  consultationOnly = false,
+  products,
 }: {
   items: { id: string; variation: string; qty: number }[];
   onRefresh: () => void;
+  consultationOnly?: boolean;
+  products: Product[];
 }) {
   const [error, setError] = useState(""),
     [url, setUrl] = useState(""),
@@ -14,6 +19,21 @@ export default function Checkout({
     setBusy(true);
     setError("");
     try {
+      if (consultationOnly) {
+        setUrl(
+          whatsapp(
+            "Olá! Gostaria de consultar este pedido:\n" +
+              items
+                .map(
+                  (i) =>
+                    `${i.qty}x ${products.find((p) => p.id === i.id)?.name || i.id} (${i.variation})`,
+                )
+                .join("\n") +
+              "\nPor favor, confirme valores, disponibilidade e entrega.",
+          ),
+        );
+        return;
+      }
       const result = await api<{ url: string }>(
         "/api/checkout",
         json("POST", { items }),
@@ -39,8 +59,9 @@ export default function Checkout({
       {url && (
         <div className="notice" role="status">
           <p>
-            Itens conferidos. Abra a mensagem para revisar e enviar à loja. A
-            disponibilidade e a entrega serão confirmadas no atendimento.
+            {consultationOnly
+              ? "Abra a mensagem para consultar valores e disponibilidade com a loja."
+              : "Itens conferidos. Abra a mensagem para revisar e enviar à loja. A disponibilidade e a entrega serão confirmadas no atendimento."}
           </p>
           <a
             className="button green"

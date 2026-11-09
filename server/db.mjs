@@ -45,3 +45,45 @@ export const parseProduct = (row) => ({
 });
 export const allProducts = () =>
   db.prepare("SELECT * FROM products ORDER BY rowid").all().map(parseProduct);
+
+// One-time catalog enrichment. Never overwrite a product edited in the admin.
+if (
+  !db.prepare("SELECT value FROM settings WHERE key='floral-catalog-v2'").get()
+) {
+  const previous = JSON.parse(
+    readFileSync(new URL("./seed-v1.json", import.meta.url), "utf8"),
+  );
+  const current = JSON.parse(
+    readFileSync(new URL("./seed.json", import.meta.url), "utf8"),
+  );
+  db.exec("BEGIN");
+  try {
+    for (const product of current) {
+      const row = db
+        .prepare("SELECT body,version FROM products WHERE id=?")
+        .get(product.id);
+      const original = previous.find((p) => p.id === product.id);
+      if (
+        row &&
+        original &&
+        row.version === 1 &&
+        JSON.stringify(JSON.parse(row.body)) === JSON.stringify(original)
+      )
+        db.prepare(
+          "UPDATE products SET body=?,version=version+1 WHERE id=?",
+        ).run(JSON.stringify(product), product.id);
+      else if (!original)
+        db.prepare("INSERT OR IGNORE INTO products(id,body) VALUES(?,?)").run(
+          product.id,
+          JSON.stringify(product),
+        );
+    }
+    db.prepare(
+      "INSERT INTO settings(key,value) VALUES('floral-catalog-v2','true')",
+    ).run();
+    db.exec("COMMIT");
+  } catch (error) {
+    db.exec("ROLLBACK");
+    throw error;
+  }
+}

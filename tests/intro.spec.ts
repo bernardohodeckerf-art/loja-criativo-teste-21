@@ -35,7 +35,7 @@ test("opening can be skipped immediately with keyboard and restores scroll", asy
     "hidden",
   );
   await expect(
-    page.getByRole("link", { name: "Ver nossos produtos" }),
+    page.getByRole("link", { name: "Comprar flores", exact: true }),
   ).toBeFocused();
 });
 test("opening is omitted for reduced motion and direct store entry", async ({
@@ -45,7 +45,7 @@ test("opening is omitted for reduced motion and direct store entry", async ({
   await page.goto("/");
   await expect(page.locator(".opening")).toHaveCount(0);
   await expect(
-    page.getByRole("link", { name: "Ver nossos produtos" }),
+    page.getByRole("link", { name: "Comprar flores", exact: true }),
   ).toBeVisible();
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/loja");

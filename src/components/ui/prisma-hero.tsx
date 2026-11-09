@@ -76,7 +76,7 @@ export default function PrismaHero({ reveal = true }: { reveal?: boolean }) {
         </p>
         <div className="hero-actions">
           <Link className="button cream" to="/loja">
-            Ver nossos produtos <ArrowUpRight size={17} />
+            Comprar flores <ArrowUpRight size={17} />
           </Link>
           <a
             className="text-link"

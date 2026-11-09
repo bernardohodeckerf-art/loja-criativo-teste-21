@@ -36,7 +36,7 @@ Sessões no servidor com cookie HttpOnly, SameSite=Strict, expiração de oito h
 
 ## Produção
 
-Hospede em serviço com **Node.js 24, processo contínuo, HTTPS e disco persistente**. Hospedagem exclusivamente estática não executa este backend. Banco e uploads compartilham o diretório `FLOWERS_DATA_DIR` (padrão `.data`). Não use armazenamento efêmero: os produtos e imagens seriam perdidos ao reiniciar o serviço. SQLite atende a uma instância; para múltiplas réplicas, migre o banco e os uploads para serviços compartilhados.
+Hospede em serviço com **Node.js 24, processo contínuo, HTTPS e disco persistente**. Hospedagem exclusivamente estática não executa este backend, mas agora mantém o catálogo com fotos e pedidos de consulta pelo WhatsApp usando a carga pública incluída no bundle. O admin e a conferência de preços/estoque em tempo real continuam exigindo a API. `vercel.json` prepara o frontend estático para rotas React na Vercel. Banco e uploads compartilham o diretório `FLOWERS_DATA_DIR` (padrão `.data`). Não use armazenamento efêmero: os produtos e imagens seriam perdidos ao reiniciar o serviço. SQLite atende a uma instância; para múltiplas réplicas, migre o banco e os uploads para serviços compartilhados.
 
 Configure variáveis no painel seguro da hospedagem:
 
@@ -66,16 +66,16 @@ Destino **confirmado pelo usuário**: `https://wa.me/554792036899`. Contatos e h
 ## Fotos, logo, vídeo e conteúdo
 
 - `public/media/hero.mp4`: versão web H.264 de 1,3 MB, silenciosa e com faststart do clipe solicitado, “Woman Arranging Flowers”, Anna Shvets/Pexels. Original usado fora do checkout: `/workspace/florista-original.mp4`. A referência original 4K está no Pexels; não é necessário baixar 4K para a página.
-- `public/media/hero.webp`: poster real de 67 KB. O componente `src/components/ui/hero-media.tsx` tem pausa, fallback e evita baixar vídeo automaticamente com economia de dados ou movimento reduzido. A cena é de ambientação e não é apresentada como equipe da loja.
+- `public/media/hero.webp`: poster real de 67 KB. O componente `src/components/ui/hero-media.tsx` reproduz continuamente, tem fallback e evita baixar vídeo automaticamente com economia de dados ou movimento reduzido. A cena é de ambientação e não é apresentada como equipe da loja.
 - `public/media/buques-hortensias*` e `decoracao-natalina*`: dois vídeos enviados pelo usuário e frames WebP deles. Galeria em `src/components/ui/media-gallery.tsx`, lista em `src/data.ts`. Reprodução sob demanda, controles nativos e navegação por teclado.
-- Fotografias de produtos: envie pelo `/admin`. Os produtos sem foto correspondente mantêm placeholder identificado. Frames reais de hortênsias e decoração natalina foram associados somente aos itens correspondentes.
+- Fotografias de produtos: envie pelo `/admin`. O catálogo inicial inclui fotos de referência da internet e frames reais; uploads da loja podem substituir as referências. Frames reais de hortênsias e decoração natalina foram associados somente aos itens correspondentes.
 - Logo atual é uma marca tipográfica com ícone botânico. Para substituir pela marca oficial, coloque `public/media/logo.svg` e altere a marca no header/footer de `src/main.tsx`.
 - Fontes locais em `public/fonts`; licenças OFL em `public/fonts/licenses`. Nenhuma requisição ao Google Fonts é necessária.
 - Origem das mídias: `public/media/ORIGINS.md`.
 
 **Arquivos ainda necessários:** as capturas de Instagram mostradas na conversa não vieram como arquivos PNG/JPG disponíveis para recorte. Não inventamos fotos da fachada nem de produtos. Anexe os arquivos originais para gerar recortes WebP sem ícones/menus e concluir a fachada real, sua ilustração em aquarela e as demais fotos da galeria. O segundo texto técnico citado no briefing também não foi recebido; a separação das camadas foi implementada a partir da descrição.
 
-Endereço: Rua Frei Estanislau Schaette, 621, Água Verde, Blumenau–SC. Google Maps/Facebook serão adicionados quando houver URL confirmada. Datas e estatísticas devem refletir o material confirmado da loja. As duas avaliações foram transcritas da captura: 4,8 e 189 avaliações, sem atualização automática pelo Google; trecho de Mayara limitado à frase completa visível.
+Endereço: Rua Frei Estanislau Schaette, 621, Água Verde, Blumenau–SC. O mapa Google Maps incorporado e o botão de rota usam esse endereço. Facebook continua pendente de URL confirmada. Datas e estatísticas devem refletir o material confirmado da loja. As duas avaliações foram transcritas da captura: 4,8 e 189 avaliações, sem atualização automática pelo Google; trecho de Mayara limitado à frase completa visível.
 
 ## Movimento e acessibilidade
 
@@ -84,8 +84,18 @@ A referência `https://sorveteria-landing.vercel.app` orientou entradas laterais
 - `src/components/ui/floral-scroll-scene.tsx`: buquê real e camadas botânicas.
 - `src/hooks/use-scroll-story.ts`: entradas em sequência, parallax e progresso.
 - `src/hooks/use-motion-preference.ts`: acompanha mudanças da preferência do sistema.
-- `src/components/ui/testimonial-v2.tsx`: adaptação do componente enviado, com pausa e modo estático. Não usa os depoimentos sobre ERP ou avatares genéricos do exemplo.
+- `src/components/ui/testimonial-v2.tsx`: adaptação do componente enviado, com movimento contínuo e modo estático. Não usa os depoimentos sobre ERP ou avatares genéricos do exemplo.
 
 No mobile os deslocamentos são menores. Com movimento reduzido, a cena deixa de ficar fixa, os depoimentos param e o hero mantém o poster. O vídeo da galeria só é carregado ao solicitar reprodução.
 
 A abertura em `src/components/ui/botanical-intro.tsx` dura 1,95 s, aparece uma vez por sessão e funciona sem aguardar as mídias. Ramos pintados entram pelas laterais, pétalas sobem, a marca é revelada como tinta e duas camadas de papel abrem a cena. O título do hero só inicia sua entrada depois da abertura. “Pular abertura” e Escape encerram a animação imediatamente; movimento reduzido omite a sequência.
+
+## Catálogo com fotos e compra visível
+
+O hero e os cards têm chamada “Comprar flores”; detalhes oferecem carrinho e compra direta pelo WhatsApp. São 11 opções iniciais, com fotos WebP locais da Unsplash/Pexels identificadas como referências e mídias reais da loja. Não foram inventados preços: o ramalhete de três rosas mantém R$ 110 e os demais itens são sob consulta. Fontes das imagens estão em `public/media/ORIGINS.md`.
+
+Quando `/api/products` não está disponível, o frontend mostra a carga pública de `server/seed.json` e permite consultar um pedido pelo WhatsApp. Nesse modo, o checkout não afirma ter conferido estoque ou preços no servidor. Com API disponível, a validação de estoque e valores continua no backend. Um catálogo vazio retornado corretamente pela API é respeitado.
+
+O enriquecimento inicial das fotos roda uma vez com a migração `floral-catalog-v2`. Ela preserva produtos editados pelo admin, não restaura itens antigos excluídos e inclui apenas as novas opções. `server/seed-v1.json` permite reconhecer os registros originais intactos.
+
+Novo clipe `public/media/arranjos-da-loja.mp4`: enviado pelo usuário, otimizado sem áudio e integrado à seção Sobre e à galeria. O hero e esse vídeo ambiente ficam em loop sem botões de pausa, assim como as avaliações e a faixa de texto. Vídeos abertos no lightbox mantêm controles nativos de reprodução de mídia. Movimento reduzido e economia de dados continuam respeitados.

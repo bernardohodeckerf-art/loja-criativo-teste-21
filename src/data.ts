@@ -1,3 +1,4 @@
+import catalog from "../server/seed.json";
 export const shop = {
   name: "Espaço das Flores",
   whatsapp: "554792036899",
@@ -35,68 +36,20 @@ export const categories = [
   "Decoração",
   "Coroas",
 ];
-export const initialProducts: Product[] = [
-  {
-    id: "ramalhete-tres-rosas",
-    name: "Um gesto de carinho",
-    category: "Ramalhetes",
-    description:
-      "Ramalhete com 3 rosas nacionais e folhagens, preparado com todo o cuidado.",
-    price: 110,
-    stock: 10,
-    featured: true,
-    active: true,
-    variation: "Rosé,Vermelho,Branco",
-    photo: "",
-    photos: [],
-  },
-  {
-    id: "buque-jardim",
-    name: "Poesia em flores",
-    category: "Buquês",
-    description:
-      "Flores da estação em uma composição delicada e cheia de vida.",
-    price: null,
-    stock: 8,
-    featured: true,
-    active: true,
-    variation: "Rosé,Colorido",
-    photo: "",
-    photos: [],
-  },
-  {
-    id: "arranjo-afeto",
-    name: "Afeto que floresce",
-    category: "Arranjos",
-    description: "Um pequeno jardim para iluminar os dias e os espaços.",
-    price: null,
-    stock: 5,
-    featured: true,
-    active: true,
-    variation: "Natural",
-    photo: "",
-    photos: [],
-  },
-  {
-    id: "cesta-amanhecer",
-    name: "Um lindo amanhecer",
-    category: "Cestas",
-    description:
-      "Surpreenda com flores e delicadezas escolhidas para presentear.",
-    price: null,
-    stock: 4,
-    featured: true,
-    active: true,
-    variation: "Tradicional",
-    photo: "",
-    photos: [],
-  },
-];
+export const initialProducts = catalog as Product[];
 export const money = (v: number) =>
   v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
 // Mídias reais recebidas em vídeo. As capas e imagens são frames dos originais.
 export const galleryMedia = [
+  {
+    id: "arranjos-video",
+    title: "Flores e detalhes que acolhem",
+    alt: "Composições reais da loja com flores verdes, folhagens e vasos decorativos",
+    poster: "/media/arranjos-da-loja.webp",
+    video: "/media/arranjos-da-loja.mp4",
+    height: 1280,
+  },
   {
     id: "hortensias-video",
     title: "Hortênsias, delicadeza em cada pétala",
@@ -155,3 +108,11 @@ export const googleReviews = {
     },
   ],
 };
+
+export const mapsEmbedUrl =
+  "https://www.google.com/maps?q=" +
+  encodeURIComponent(shop.address + ", Brasil") +
+  "&output=embed";
+export const mapsDirectionsUrl =
+  "https://www.google.com/maps/dir/?api=1&destination=" +
+  encodeURIComponent(shop.address + ", Brasil");

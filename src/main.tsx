@@ -23,6 +23,9 @@ import { api, json } from "./api";
 import Admin from "./components/ui/admin";
 import Checkout from "./components/ui/checkout";
 import PrismaHero from "./components/ui/prisma-hero";
+import AmbientLoop from "./components/ui/ambient-loop";
+import StoreMap from "./components/ui/store-map";
+import FloralRibbon from "./components/ui/floral-ribbon";
 import BotanicalIntro from "./components/ui/botanical-intro";
 import MediaGallery from "./components/ui/media-gallery";
 import TestimonialsSection from "./components/ui/testimonial-v2";
@@ -48,17 +51,22 @@ function read<T>(key: string, fallback: T): T {
 }
 function App() {
   const location = useLocation();
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>(initialProducts);
+  const [apiAvailable, setApiAvailable] = useState(false);
   const [catalogError, setCatalogError] = useState("");
   const [loading, setLoading] = useState(true);
   useScrollStory(location.pathname + products.length);
   const refreshProducts = useCallback(async () => {
     try {
       const result = await api<Product[]>("/api/products");
+      if (!Array.isArray(result)) throw new Error("Catálogo indisponível.");
       setProducts(result);
+      setApiAvailable(true);
       setCatalogError("");
     } catch (e) {
       setCatalogError((e as Error).message);
+      setApiAvailable(false);
+      setProducts(initialProducts);
     } finally {
       setLoading(false);
     }
@@ -164,7 +172,8 @@ function App() {
       <main>
         {catalogError && (
           <div className="catalog-status" role="alert">
-            Não foi possível atualizar o catálogo.{" "}
+            Consulte os produtos e encomende pelo WhatsApp. Disponibilidade e
+            valores serão confirmados pela loja.{" "}
             <button onClick={() => refreshProducts()}>Tentar novamente</button>
           </div>
         )}
@@ -199,7 +208,6 @@ function App() {
                 </span>
               </div>
             </div>
-            <FloralScrollScene />
             <section className="section collection" id="colecao">
               <div className="section-top">
                 <div>
@@ -237,6 +245,8 @@ function App() {
                 ))}
               </div>
             </section>
+            <FloralRibbon />
+            <FloralScrollScene />
             <section className="occasions" id="ocasioes">
               <div>
                 <span className="eyebrow light">
@@ -269,14 +279,16 @@ function App() {
               </div>
             </section>
             <section className="section about" id="sobre">
-              <div className="about-art">
-                <Flower2 size={130} />
-                <span>
-                  Um lugar onde
-                  <br />
-                  <em>o carinho cria raízes.</em>
-                </span>
-                <small>ILUSTRAÇÃO BOTÂNICA · FOTO DA FACHADA A INSERIR</small>
+              <div className="about-art about-photo">
+                <AmbientLoop />
+                <div>
+                  <span>
+                    Um lugar onde
+                    <br />
+                    <em>o carinho cria raízes.</em>
+                  </span>
+                  <small>CENAS REAIS DO ESPAÇO DAS FLORES</small>
+                </div>
               </div>
               <div>
                 <span className="eyebrow">
@@ -334,6 +346,7 @@ function App() {
                 </small>
               </div>
             </section>
+            <StoreMap />
           </>
         ) : location.pathname === "/loja" ? (
           <Catalog products={active} />
@@ -442,6 +455,8 @@ function App() {
                     key={JSON.stringify(cart)}
                     items={cart}
                     onRefresh={refreshProducts}
+                    consultationOnly={!apiAvailable}
+                    products={products}
                   />
                 ) : (
                   <p>Remova ou ajuste os itens indisponíveis para continuar.</p>
@@ -513,10 +528,18 @@ function Card({ p, index }: { p: Product; index: number }) {
           <ArrowUpRight size={19} />
         </span>
         {index === 0 && <span className="tag">UM CLÁSSICO DO AFETO</span>}
+        {p.photo.startsWith("/media/colecao/") && (
+          <span className="reference-tag">FOTO DE REFERÊNCIA</span>
+        )}
       </div>
       <span className="eyebrow">{p.category}</span>
       <h3>{p.name}</h3>
-      <p>{p.price !== null ? money(p.price) : "Consulte nosso atendimento"}</p>
+      <p>{p.price !== null ? money(p.price) : "Preço sob consulta"}</p>
+      <span className="card-buy">
+        <ShoppingBag size={15} />
+        {p.stock > 0 ? "Comprar flores" : "Consultar disponibilidade"}
+        <ArrowUpRight size={15} />
+      </span>
     </Link>
   );
 }
@@ -706,12 +729,14 @@ function Detail({
             </Link>
           )}
           <a
-            className="text-link dark"
+            className="button whatsapp-buy"
+            target="_blank"
+            rel="noreferrer"
             href={whatsapp(
-              `Olá! Gostaria de consultar ${p.name}, variação ${selectedVariation}.`,
+              `Olá! Quero encomendar ${qty}x ${p.name}, variação ${selectedVariation}. Pode confirmar o valor e a disponibilidade?`,
             )}
           >
-            Consultar pelo WhatsApp ↗
+            Comprar pelo WhatsApp ↗
           </a>
         </div>
       </div>

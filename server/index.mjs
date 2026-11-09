@@ -27,6 +27,7 @@ app.use(
             styleSrc: ["'self'", "'unsafe-inline'"],
             imgSrc: ["'self'", "https:", "blob:", "data:"],
             fontSrc: ["'self'"],
+            frameSrc: ["https://www.google.com", "https://maps.google.com"],
             mediaSrc: ["'self'"],
             connectSrc: ["'self'"],
             objectSrc: ["'none'"],
@@ -120,12 +121,9 @@ app.post("/api/auth/login", (req, res) => {
     .get(ip, now);
   if (attempt?.attempts >= 5) {
     res.set("Retry-After", String(Math.ceil((attempt.expires - now) / 1000)));
-    return res
-      .status(429)
-      .json({
-        error:
-          "Muitas tentativas. Aguarde 15 minutos antes de tentar novamente.",
-      });
+    return res.status(429).json({
+      error: "Muitas tentativas. Aguarde 15 minutos antes de tentar novamente.",
+    });
   }
   const { username, password } = req.body || {};
   if (
@@ -257,12 +255,10 @@ app.put("/api/admin/products/:id", auth, csrf, (req, res) => {
     )
     .run(JSON.stringify(value), p.id, p.version);
   if (!result.changes)
-    return res
-      .status(409)
-      .json({
-        error:
-          "Produto alterado em outra sessão. Atualize a página antes de editar.",
-      });
+    return res.status(409).json({
+      error:
+        "Produto alterado em outra sessão. Atualize a página antes de editar.",
+    });
   res.json({ ...value, version: p.version + 1 });
 });
 app.delete("/api/admin/products/:id", auth, csrf, (req, res) => {
@@ -319,12 +315,10 @@ app.post(
       }
       res.status(201).json({ photos: outputs });
     } catch {
-      return res
-        .status(400)
-        .json({
-          error:
-            "Uma das fotos é inválida. Use PNG, JPEG ou WebP de até 8 MB e 40 megapixels.",
-        });
+      return res.status(400).json({
+        error:
+          "Uma das fotos é inválida. Use PNG, JPEG ou WebP de até 8 MB e 40 megapixels.",
+      });
     }
   },
 );
@@ -360,11 +354,9 @@ app.post("/api/checkout", (req, res) => {
         .json({ error: "Um dos itens foi alterado. Atualize o carrinho." });
     totals.set(p.id, (totals.get(p.id) || 0) + item.qty);
     if (totals.get(p.id) > p.stock)
-      return res
-        .status(409)
-        .json({
-          error: `Estoque insuficiente para ${p.name}. Ajuste o carrinho.`,
-        });
+      return res.status(409).json({
+        error: `Estoque insuficiente para ${p.name}. Ajuste o carrinho.`,
+      });
     const value =
       p.price === null
         ? "sob consulta"
