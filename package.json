@@ -1,0 +1,51 @@
+{
+  "name": "loja-criativo-teste-21",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "test": "playwright test",
+    "start": "node --env-file-if-exists=.env server/index.mjs",
+    "admin:setup": "node --env-file-if-exists=.env server/setup-admin.mjs",
+    "test:api": "node --test server/tests/*.test.mjs",
+    "test:production": "npm run build && node scripts/production-smoke.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bernardohodeckerf-art/loja-criativo-teste-21.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/bernardohodeckerf-art/loja-criativo-teste-21/issues"
+  },
+  "homepage": "https://github.com/bernardohodeckerf-art/loja-criativo-teste-21#readme",
+  "dependencies": {
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.3",
+    "framer-motion": "^14.10.1",
+    "helmet": "^8.3.0",
+    "lucide-react": "^1.70.0",
+    "multer": "^2.5.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-router-dom": "^7.18.5",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.0",
+    "@tailwindcss/vite": "^4.3.5",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.2.1",
+    "tailwindcss": "^4.3.5",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.6"
+  }
+}

@@ -1,0 +1,60 @@
+[
+  {
+    "id": "ramalhete-tres-rosas",
+    "name": "Um gesto de carinho",
+    "category": "Ramalhetes",
+    "description": "Ramalhete com 3 rosas nacionais e folhagens, preparado com todo o cuidado.",
+    "price": 110,
+    "stock": 10,
+    "featured": true,
+    "active": true,
+    "variation": "Rosé,Vermelho,Branco",
+    "photo": "",
+    "photos": []
+  },
+  {
+    "id": "buque-jardim",
+    "name": "Poesia em flores",
+    "category": "Buquês",
+    "description": "Buquê de hortênsias com folhagens. Imagens reais extraídas do vídeo da loja; composição e disponibilidade confirmadas no atendimento.",
+    "price": null,
+    "stock": 8,
+    "featured": true,
+    "active": true,
+    "variation": "Lilás,Rosado",
+    "photo": "/media/buques-hortensias-detalhe.webp",
+    "photos": [
+      "/media/buques-hortensias-detalhe.webp",
+      "/media/buques-hortensias-capa.webp"
+    ]
+  },
+  {
+    "id": "decoracao-natalina",
+    "name": "O encanto do Natal",
+    "category": "Decoração",
+    "description": "Composição natalina com miniaturas e detalhes artesanais. Frame do vídeo real da loja. Consulte peças e disponibilidade.",
+    "price": null,
+    "stock": 4,
+    "featured": true,
+    "active": true,
+    "variation": "Composição sob consulta",
+    "photo": "/media/decoracao-natalina-detalhe.webp",
+    "photos": [
+      "/media/decoracao-natalina-detalhe.webp",
+      "/media/decoracao-natalina-capa.webp"
+    ]
+  },
+  {
+    "id": "cesta-amanhecer",
+    "name": "Um lindo amanhecer",
+    "category": "Cestas",
+    "description": "Surpreenda com flores e delicadezas escolhidas para presentear. Imagem ilustrativa; composição sob consulta.",
+    "price": null,
+    "stock": 4,
+    "featured": true,
+    "active": true,
+    "variation": "Tradicional",
+    "photo": "",
+    "photos": []
+  }
+]
