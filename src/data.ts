@@ -6,8 +6,8 @@ export const shop = {
   address: "Rua Frei Estanislau Schaette, 621, Água Verde, Blumenau–SC",
   hours: "Seg.–sex. 08:00–18:00 · Sáb. 08:30–12:30",
   instagram: "https://www.instagram.com/espacodasflores_/",
-  hero: "/media/hero.webp",
-  video: "/media/hero.mp4",
+  hero: "/media/arranjos-da-loja.webp",
+  video: "/media/arranjos-da-loja.mp4",
 };
 export const whatsapp = (message: string) =>
   `https://wa.me/${shop.whatsapp}?text=${encodeURIComponent(message)}`;

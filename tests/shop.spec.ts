@@ -182,12 +182,12 @@ test("hero uses a real poster and avoids automatic video for reduced motion", as
   await page.emulateMedia({ reducedMotion: "reduce" });
   const requests: string[] = [];
   page.on("request", (r) => {
-    if (r.url().endsWith("/hero.mp4")) requests.push(r.url());
+    if (r.url().endsWith("/arranjos-da-loja.mp4")) requests.push(r.url());
   });
   await page.goto("/");
   await expect(page.locator(".hero-media img")).toHaveAttribute(
     "src",
-    "/media/hero.webp",
+    "/media/arranjos-da-loja.webp",
   );
   await expect(page.locator(".hero-media video")).toHaveCount(0);
   expect(requests).toHaveLength(0);
@@ -234,4 +234,19 @@ test("photos, purchase buttons and map stay available without the API", async ({
   await expect(
     page.getByRole("link", { name: "Abrir pedido no WhatsApp" }),
   ).toHaveAttribute("href", /confirme%20valores/);
+});
+test("hero plays the uploaded store video as a continuous muted background", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const video = page.locator(".hero-media video");
+  await expect(video).toHaveAttribute("src", "/media/arranjos-da-loja.mp4");
+  await expect(video).toHaveAttribute("poster", "/media/arranjos-da-loja.webp");
+  await expect(video).toHaveAttribute("loop", "");
+  await expect(video).toHaveAttribute("autoplay", "");
+  expect(await video.evaluate((v: HTMLVideoElement) => v.muted)).toBeTruthy();
+  await expect
+    .poll(() => video.evaluate((v: HTMLVideoElement) => v.currentTime))
+    .toBeGreaterThan(0);
+  await expect(page.getByRole("button", { name: /pausar/i })).toHaveCount(0);
 });

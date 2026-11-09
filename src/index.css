@@ -3540,3 +3540,30 @@ dd {
 .product-card > .card-buy {
   margin-top: auto;
 }
+/* Portrait footage from the store fills the hero on every screen size. */
+.hero-media img,
+.hero-media video {
+  object-position: center 30%;
+}
+@media (max-width: 760px) {
+  .hero-media {
+    inset: -20px 0 -40px;
+    height: auto;
+  }
+  .hero-media img,
+  .hero-media video {
+    object-position: center 35%;
+  }
+  .hero-video-shade {
+    background: linear-gradient(
+      180deg,
+      #172d2430 0%,
+      #1b322a8c 26%,
+      #1c332be6 53%,
+      #263b2ff2 100%
+    );
+  }
+  .hero-credit {
+    top: 285px;
+  }
+}

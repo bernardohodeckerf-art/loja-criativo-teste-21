@@ -29,8 +29,8 @@ export default function HeroMedia() {
           src={shop.hero}
           alt=""
           fetchPriority="high"
-          width="1280"
-          height="720"
+          width="720"
+          height="1280"
         />
         {enabled && (
           <video
@@ -48,7 +48,7 @@ export default function HeroMedia() {
       </motion.div>
       <div className="hero-video-shade" />
       <span className="hero-credit">
-        Imagem de ambientação · Anna Shvets / Pexels
+        Flores, detalhes e afeto · Espaço das Flores
       </span>
     </>
   );

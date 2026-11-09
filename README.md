@@ -65,8 +65,8 @@ Destino **confirmado pelo usuário**: `https://wa.me/554792036899`. Contatos e h
 
 ## Fotos, logo, vídeo e conteúdo
 
-- `public/media/hero.mp4`: versão web H.264 de 1,3 MB, silenciosa e com faststart do clipe solicitado, “Woman Arranging Flowers”, Anna Shvets/Pexels. Original usado fora do checkout: `/workspace/florista-original.mp4`. A referência original 4K está no Pexels; não é necessário baixar 4K para a página.
-- `public/media/hero.webp`: poster real de 67 KB. O componente `src/components/ui/hero-media.tsx` reproduz continuamente, tem fallback e evita baixar vídeo automaticamente com economia de dados ou movimento reduzido. A cena é de ambientação e não é apresentada como equipe da loja.
+- Fundo do hero: `public/media/arranjos-da-loja.mp4`, o vídeo enviado pelo usuário, otimizado para H.264 sem áudio e com faststart (2,1 MB). A configuração está em `src/data.ts` e o enquadramento vertical em `src/index.css`.
+- Poster do hero: `public/media/arranjos-da-loja.webp`, frame real do mesmo clipe (48 KB). `src/components/ui/hero-media.tsx` reproduz em loop, sem botões de pausa, com fallback e respeito à economia de dados/movimento reduzido. O mesmo arquivo é reutilizado na seção Sobre e na galeria, sem downloads duplicados.
 - `public/media/buques-hortensias*` e `decoracao-natalina*`: dois vídeos enviados pelo usuário e frames WebP deles. Galeria em `src/components/ui/media-gallery.tsx`, lista em `src/data.ts`. Reprodução sob demanda, controles nativos e navegação por teclado.
 - Fotografias de produtos: envie pelo `/admin`. O catálogo inicial inclui fotos de referência da internet e frames reais; uploads da loja podem substituir as referências. Frames reais de hortênsias e decoração natalina foram associados somente aos itens correspondentes.
 - Logo atual é uma marca tipográfica com ícone botânico. Para substituir pela marca oficial, coloque `public/media/logo.svg` e altere a marca no header/footer de `src/main.tsx`.
